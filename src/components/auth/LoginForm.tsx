@@ -1,5 +1,6 @@
 "use client";
 
+import NextLink from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
@@ -20,18 +21,16 @@ import {
 import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
 import { LoginFormData, loginSchema } from "@/libs/validations/login.schema";
 import { ROUTES } from "@/libs/constants";
-import { LoadingSpinner } from "../ui/LoadingSpinner";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -41,7 +40,6 @@ export function LoginForm() {
   });
 
   const onSubmit = async (data: LoginFormData) => {
-    setIsLoading(true);
     setError(null);
 
     try {
@@ -59,20 +57,14 @@ export function LoginForm() {
     } catch (err: unknown) {
       console.error("Login error:", err);
       setError("An unexpected error occurred");
-    } finally {
-      setIsLoading(false);
     }
   };
 
-  if (isLoading) {
-    return <LoadingSpinner message="Signing in..." />;
-  }
-
   return (
-    <Card sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
+    <Card sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
       <CardContent sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
-          Sign In
+          Login
         </Typography>
 
         <Typography
@@ -81,7 +73,7 @@ export function LoginForm() {
           align="center"
           sx={{ mb: 3 }}
         >
-          Welcome back! Please sign in to your account.
+          Welcome back! Please login to your account.
         </Typography>
 
         {error && (
@@ -152,15 +144,16 @@ export function LoginForm() {
             fullWidth
             variant="contained"
             sx={{ mt: 3, mb: 2 }}
-            disabled={isLoading}
+            disabled={isSubmitting}
+            loading={isSubmitting}
           >
-            Sign In
+            Login
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2">
               Don&#39;t have an account?{" "}
-              <Link href={ROUTES.REGISTER} underline="hover">
+              <Link component={NextLink} href={ROUTES.REGISTER} underline="hover">
                 Sign up
               </Link>
             </Typography>

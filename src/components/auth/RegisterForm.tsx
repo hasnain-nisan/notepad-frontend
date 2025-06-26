@@ -1,146 +1,252 @@
 "use client";
 
-import React from "react";
+import NextLink from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
+import { useForm, Controller } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
-  Box,
   Card,
   CardContent,
   TextField,
   Button,
   Typography,
+  Box,
   Link,
-  CircularProgress,
+  Alert,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import toast from "react-hot-toast";
-import { useRouter } from "next/navigation";
-import NextLink from "next/link";
-import { registerSchema, RegisterSchemaType } from "@/libs/validations/register.schema";
+import {
+  Visibility,
+  VisibilityOff,
+  Email,
+  Lock,
+  Person,
+} from "@mui/icons-material";
+import { ROUTES } from "@/libs/constants";
+import {
+  RegisterFormData,
+  registerSchema,
+} from "@/libs/validations/register.schema";
 
 export default function RegisterForm() {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting },
-  } = useForm<RegisterSchemaType>({
-    resolver: zodResolver(registerSchema),
-  });
-
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const router = useRouter();
 
-  const onSubmit = async (data: RegisterSchemaType) => {
+  const {
+    control,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<RegisterFormData>({
+    resolver: zodResolver(registerSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+      confirmPassword: "",
+    },
+  });
+
+  const onSubmit = async (data: RegisterFormData) => {
+    setError(null);
+
     try {
-      const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE_URL}/auth/register`,
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        }
-      );
+      const result = await signIn("credentials", {
+        email: data.email,
+        password: data.password,
+        redirect: false,
+      });
 
-      const response = await res.json();
-
-      if (!res.ok) {
-        throw new Error(response.message || "Registration failed");
+      if (result?.error) {
+        setError(result.error);
+      } else {
+        router.push(ROUTES.DASHBOARD);
       }
-
-      toast.success("Registration successful!");
-      router.push("/login");
-    } catch (error: any) {
-      toast.error(error.message || "Something went wrong");
+    } catch (err: unknown) {
+      console.error("Login error:", err);
+      setError("An unexpected error occurred");
     }
   };
 
   return (
     <Card sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
       <CardContent sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" align="center" gutterBottom>
-          Create Account
+        <Typography variant="h4" component="h1" gutterBottom align="center">
+          Register
         </Typography>
+
         <Typography
           variant="body2"
           color="text.secondary"
           align="center"
           sx={{ mb: 3 }}
         >
-          Fill in the details to sign up.
+          Welcome! Please create your account.
         </Typography>
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <TextField
-            fullWidth
-            label="First Name"
-            margin="normal"
-            {...register("firstName")}
-            error={!!errors.firstName}
-            helperText={errors.firstName?.message}
-            required
+        {error && (
+          <Alert severity="error" sx={{ mb: 2 }}>
+            {error}
+          </Alert>
+        )}
+
+        <Box component="form" onSubmit={handleSubmit(onSubmit)}>
+          <Controller
+            name="firstName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="First Name"
+                type="text"
+                error={!!errors.firstName}
+                helperText={errors.firstName?.message}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
-          <TextField
-            fullWidth
-            label="Last Name"
-            margin="normal"
-            {...register("lastName")}
-            error={!!errors.lastName}
-            helperText={errors.lastName?.message}
-            required
+
+          <Controller
+            name="lastName"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="Last Name"
+                type="text"
+                error={!!errors.lastName}
+                helperText={errors.lastName?.message}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Person />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
-          <TextField
-            fullWidth
-            label="Email"
-            type="email"
-            autoComplete="email"
-            margin="normal"
-            {...register("email")}
-            error={!!errors.email}
-            helperText={errors.email?.message}
-            required
+
+          <Controller
+            name="email"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="Email"
+                type="email"
+                error={!!errors.email}
+                helperText={errors.email?.message}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Email />
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
-          <TextField
-            fullWidth
-            label="Password"
-            type="password"
-            autoComplete="new-password"
-            margin="normal"
-            {...register("password")}
-            error={!!errors.password}
-            helperText={errors.password?.message}
-            required
+
+          <Controller
+            name="password"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="Password"
+                type={showPassword ? "text" : "password"}
+                error={!!errors.password}
+                helperText={errors.password?.message}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowPassword(!showPassword)}
+                        edge="end"
+                      >
+                        {showPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
-          <TextField
-            fullWidth
-            label="Confirm Password"
-            type="password"
-            autoComplete="new-password"
-            margin="normal"
-            {...register("confirmPassword")}
-            error={!!errors.confirmPassword}
-            helperText={errors.confirmPassword?.message}
-            required
+
+          <Controller
+            name="confirmPassword"
+            control={control}
+            render={({ field }) => (
+              <TextField
+                {...field}
+                fullWidth
+                label="Confirm Password"
+                type={showConfirmPassword ? "text" : "password"}
+                error={!!errors.confirmPassword}
+                helperText={errors.confirmPassword?.message}
+                margin="normal"
+                InputProps={{
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <Lock />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        edge="end"
+                      >
+                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
+              />
+            )}
           />
 
           <Button
             type="submit"
             fullWidth
             variant="contained"
+            sx={{ mt: 3, mb: 2 }}
             disabled={isSubmitting}
-            sx={{ mt: 3, mb: 2, py: 1.5 }}
+            loading={isSubmitting}
           >
-            {isSubmitting ? <CircularProgress size={24} /> : "Register"}
+            Register
           </Button>
 
           <Box textAlign="center">
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2">
               Already have an account?{" "}
-              <Link
-                component={NextLink}
-                href="/login"
-                variant="body2"
-                sx={{ textDecoration: "none" }}
-              >
-                Sign in here
+              <Link component={NextLink} href={ROUTES.LOGIN} underline="hover">
+                Login
               </Link>
             </Typography>
           </Box>
