@@ -9,7 +9,7 @@ notepad-frontend/
 │   │   │       └── [...nextauth]/
 │   │   │           └── route.ts
 │   │   ├── auth/                     # Auth pages
-│   │   │   ├── signin/
+│   │   │   ├── login/
 │   │   │   │   └── page.tsx
 │   │   │   └── signup/
 │   │   │       └── page.tsx
@@ -20,7 +20,7 @@ notepad-frontend/
 │   │   └── page.tsx
 │   ├── components/                   # Reusable components
 │   │   ├── auth/
-│   │   │   ├── SignInForm.tsx
+│   │   │   ├── LoginForm.tsx
 │   │   │   ├── SignUpForm.tsx
 │   │   │   └── AuthGuard.tsx
 │   │   ├── layout/

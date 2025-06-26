@@ -22,8 +22,8 @@ export const API_ENDPOINTS: ApiEndpoints = {
 
 export const ROUTES = {
   HOME: "/",
-  SIGNIN: "/auth/signin",
-  SIGNUP: "/auth/signup",
+  LOGIN: "/login",
+  REGISTER: "/register",
   DASHBOARD: "/dashboard",
   NOTES: "/notes",
 } as const;

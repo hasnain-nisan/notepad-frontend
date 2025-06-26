@@ -160,7 +160,7 @@ export function LoginForm() {
           <Box textAlign="center">
             <Typography variant="body2">
               Don&#39;t have an account?{" "}
-              <Link href={ROUTES.SIGNUP} underline="hover">
+              <Link href={ROUTES.REGISTER} underline="hover">
                 Sign up
               </Link>
             </Typography>
