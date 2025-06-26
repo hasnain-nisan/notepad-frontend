@@ -52,7 +52,7 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        setError("Invalid login credentials");
+        setError(result.error);
       } else {
         router.push(ROUTES.DASHBOARD);
       }

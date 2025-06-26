@@ -43,6 +43,7 @@ export class AuthRepository implements IAuthRepository {
 
       return (data as ApiResponse<T>).data;
     } catch (error) {
+      console.log("Error in AuthRepository.makeRequest:", error);
       if (error instanceof Error) {
         throw error;
       }
