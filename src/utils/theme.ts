@@ -31,7 +31,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Roboto", "Helvetica", "Arial", sans-serif',
+    fontFamily: '"Poppins", "Helvetica", "Arial", sans-serif',
     h1: {
       fontSize: '2.125rem',
       fontWeight: 600,

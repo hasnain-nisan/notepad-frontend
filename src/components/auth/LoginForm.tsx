@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { use } from "react";
 import {
   Box,
   Card,
@@ -8,75 +8,53 @@ import {
   TextField,
   Button,
   Typography,
-  Alert,
   Link,
   CircularProgress,
 } from "@mui/material";
-import { LoginRequest } from "@/types/auth.types";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema, LoginSchemaType } from "@/libs/validations/auth.schema";
+import { signIn } from "next-auth/react";
+import toast from "react-hot-toast";
+import { useRouter } from "next/navigation";
+import NextLink from "next/link";
+
 // import { useAuth } from "@/hooks/auth.hooks";
 
-interface LoginFormProps {
-  onToggleMode: () => void;
-}
-
-export default function LoginForm({ onToggleMode }: LoginFormProps) {
-  const isLoading = false; // Placeholder for loading state
-  //   const { login, isLoading, error } = useAuth();
-  const [formData, setFormData] = useState<LoginRequest>({
-    email: "",
-    password: "",
+export default function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginSchemaType>({
+    resolver: zodResolver(loginSchema),
   });
-  const [formErrors, setFormErrors] = useState<Partial<LoginRequest>>({});
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev: LoginRequest) => ({ ...prev, [name]: value }));
+  const router = useRouter();
 
-    // Clear field error when user starts typing
-    if (formErrors[name as keyof LoginRequest]) {
-      setFormErrors((prev: Partial<LoginRequest>) => ({ ...prev, [name]: "" }));
-    }
-  };
+  // const { login, isLoading, error } = useAuth(); // placeholder for actual login logic
 
-  const validateForm = (): boolean => {
-    const errors: Partial<LoginRequest> = {};
+  const onSubmit = async (data: LoginSchemaType) => {
+    const res = await signIn("credentials", {
+      redirect: false,
+      email: data.email,
+      password: data.password,
+    });
 
-    if (!formData.email) {
-      errors.email = "Email is required";
-    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      errors.email = "Email is invalid";
-    }
-
-    if (!formData.password) {
-      errors.password = "Password is required";
-    } else if (formData.password.length < 6) {
-      errors.password = "Password must be at least 6 characters";
-    }
-
-    setFormErrors(errors);
-    return Object.keys(errors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    if (!validateForm()) return;
-
-    try {
-      //   await login(formData);
-    } catch (error) {
-      console.log(error);
-      // Error is handled by the hook
+    if (res?.error) {
+      toast.error(res.error);
+    } else {
+      toast.success("Login successful!");
+      router.push("/dashboard");
     }
   };
 
   return (
     <Card sx={{ maxWidth: 400, mx: "auto", mt: 4 }}>
       <CardContent sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
+        <Typography variant="h4" component="h1" align="center" gutterBottom>
           Sign In
         </Typography>
-
         <Typography
           variant="body2"
           color="text.secondary"
@@ -86,61 +64,49 @@ export default function LoginForm({ onToggleMode }: LoginFormProps) {
           Welcome back! Please sign in to your account.
         </Typography>
 
-        {/* {error && (
-          <Alert severity="error" sx={{ mb: 2 }}>
-            {error}
-          </Alert>
-        )} */}
-
-        <Box component="form" onSubmit={handleSubmit} noValidate>
+        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
           <TextField
             fullWidth
-            id="email"
-            name="email"
             label="Email Address"
             type="email"
-            value={formData.email}
-            onChange={handleChange}
-            error={!!formErrors.email}
-            helperText={formErrors.email}
-            margin="normal"
-            required
             autoComplete="email"
             autoFocus
+            margin="normal"
+            {...register("email")}
+            error={!!errors.email}
+            helperText={errors.email?.message}
+            required
           />
 
           <TextField
             fullWidth
-            id="password"
-            name="password"
             label="Password"
             type="password"
-            value={formData.password}
-            onChange={handleChange}
-            error={!!formErrors.password}
-            helperText={formErrors.password}
-            margin="normal"
-            required
             autoComplete="current-password"
+            margin="normal"
+            {...register("password")}
+            error={!!errors.password}
+            helperText={errors.password?.message}
+            required
           />
 
           <Button
             type="submit"
             fullWidth
             variant="contained"
-            disabled={isLoading}
+            disabled={isSubmitting}
             sx={{ mt: 3, mb: 2, py: 1.5 }}
           >
-            {isLoading ? <CircularProgress size={24} /> : "Sign In"}
+            {isSubmitting ? <CircularProgress size={24} /> : "Sign In"}
           </Button>
 
           <Box textAlign="center">
             <Typography variant="body2" color="text.secondary">
               Don&apos;t have an account?{" "}
               <Link
-                component="button"
+                component={NextLink}
+                href="/register"
                 variant="body2"
-                onClick={onToggleMode}
                 sx={{ textDecoration: "none" }}
               >
                 Sign up here
