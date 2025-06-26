@@ -1,4 +1,4 @@
-import LoginForm from "@/components/auth/LoginForm";
+import RegisterForm from "@/components/auth/RegisterForm";
 import { Box } from "@mui/material";
 
 export default function Login() {
@@ -11,7 +11,7 @@ export default function Login() {
       minHeight="100vh"
       padding={2}
     >
-      <LoginForm />
+      <RegisterForm />
     </Box>
   );
 }

@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { loginSchema, LoginSchemaType } from "@/libs/validations/auth.schema";
+import { loginSchema, LoginSchemaType } from "@/libs/validations/login.schema";
 import { signIn } from "next-auth/react";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
