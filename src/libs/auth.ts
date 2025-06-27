@@ -2,6 +2,8 @@ import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { AuthService } from "@/services/AuthService";
 
+const authService = new AuthService();
+
 export const authOptions: NextAuthOptions = {
   providers: [
     CredentialsProvider({
@@ -16,7 +18,6 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
-          const authService = new AuthService();
           const response = await authService.login({
             email: credentials.email,
             password: credentials.password,

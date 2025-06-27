@@ -21,6 +21,7 @@ import {
 import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
 import { LoginFormData, loginSchema } from "@/libs/validations/login.schema";
 import { ROUTES } from "@/libs/constants";
+import toast from "react-hot-toast";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -52,6 +53,7 @@ export function LoginForm() {
       if (result?.error) {
         setError(result.error);
       } else {
+        toast.success("Login successful!");
         router.push(ROUTES.DASHBOARD);
       }
     } catch (err: unknown) {

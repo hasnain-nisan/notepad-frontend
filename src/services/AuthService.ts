@@ -38,8 +38,6 @@ export class AuthService {
     } catch (error) {
       // Even if logout fails on server, clear local data
       console.warn("Server logout failed:", error);
-    } finally {
-      this.clearAuthData();
     }
   }
 

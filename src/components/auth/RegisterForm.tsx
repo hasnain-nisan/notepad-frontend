@@ -30,6 +30,10 @@ import {
   RegisterFormData,
   registerSchema,
 } from "@/libs/validations/register.schema";
+import { AuthService } from "@/services/AuthService";
+import toast from "react-hot-toast";
+
+const authService = new AuthService();
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -56,6 +60,11 @@ export default function RegisterForm() {
     setError(null);
 
     try {
+      // Call the AuthService to register the user
+      await authService.register(data);
+
+      toast.success("Registration completed successfully, now logging in");
+      
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -68,8 +77,11 @@ export default function RegisterForm() {
         router.push(ROUTES.DASHBOARD);
       }
     } catch (err: unknown) {
-      console.error("Login error:", err);
-      setError("An unexpected error occurred");
+      if (err && typeof err === "object" && "message" in err) {
+        setError((err as { message: string }).message);
+      } else {
+        setError("An unexpected error occurred");
+      }
     }
   };
 
