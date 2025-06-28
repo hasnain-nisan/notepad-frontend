@@ -28,6 +28,7 @@ import { useIsMobile } from "@/hooks/useIsMobile";
 import { useAppDispatch, useAppSelector } from "@/hooks/redux";
 import { setSidebarOpen } from "@/store/slices/uiSlice";
 import { LogoSection } from "../ui/LogoSection";
+import { LogoutButton } from "../ui/LogoutButton";
 
 const iconMap = {
   dashboard: Dashboard,
@@ -60,12 +61,12 @@ export const SideBar: React.FC = () => {
     >
       <Box>
         {/* Logo / Branding */}
-        <LogoSection/>
+        <LogoSection />
 
-        <Divider />
+        {/* <Divider /> */}
 
         {/* Navigation Items */}
-        <List sx={{ px: 2, py: 1 }}>
+        <List sx={{ px: 2, py: 2 }}>
           {NAVIGATION_ITEMS.map((item) => {
             const Icon = iconMap[item.icon as keyof typeof iconMap];
             const isActive = pathname === item.path;
@@ -114,23 +115,38 @@ export const SideBar: React.FC = () => {
         <Box
           sx={{
             display: "flex",
-            alignItems: "center",
-            gap: 2,
+            flexDirection: "column",
+            gap: 1.5,
             p: 2,
             bgcolor: "action.hover",
             borderRadius: 2,
           }}
         >
-          <Avatar sx={{ bgcolor: "secondary.main", width: 36, height: 36 }}>
-            JD
-          </Avatar>
-          <Box>
-            <Typography variant="body2" fontWeight={500}>
-              John Doe
-            </Typography>
-            <Typography variant="caption" color="text.secondary">
-              Administrator
-            </Typography>
+          {/* Row 1: Avatar + Info */}
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              width: "100%",
+              gap: 2,
+            }}
+          >
+            <Avatar sx={{ bgcolor: "secondary.main", width: 36, height: 36 }}>
+              JD
+            </Avatar>
+            <Box>
+              <Typography variant="body2" fontWeight={500}>
+                John Doe
+              </Typography>
+              <Typography variant="caption" color="text.secondary">
+                Administrator
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Row 2: Logout Button full width */}
+          <Box sx={{ width: "100%" }}>
+            <LogoutButton />
           </Box>
         </Box>
       </Box>
