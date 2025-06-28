@@ -2,11 +2,17 @@
 
 import { Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { signOut } from "next-auth/react";
+import { AuthService } from "@/services/AuthService";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/libs/constants";
+
+const authService = new AuthService();
 
 export const LogoutButton = () => {
-  const handleLogout = () => {
-    signOut({ callbackUrl: "/" });
+    const router = useRouter();
+  const handleLogout = async () => {
+    await authService.logout();
+    router.push(ROUTES.HOME);
   };
 
   return (
