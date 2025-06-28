@@ -1,22 +1,33 @@
-"use client"
+"use client";
 
-import type React from "react"
+import React from "react";
 import {
   Drawer,
   List,
+  Box,
+  Avatar,
+  Typography,
+  Divider,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  Typography,
-  Box,
-  Divider,
-  Avatar,
-} from "@mui/material"
-import { Dashboard, Analytics, People, Inventory, ShoppingCart, Settings } from "@mui/icons-material"
-import { usePathname } from "next/navigation"
-import Link from "next/link"
-import { DRAWER_WIDTH, NAVIGATION_ITEMS } from "@/libs/constants"
+} from "@mui/material";
+import {
+  Dashboard,
+  Analytics,
+  People,
+  Inventory,
+  ShoppingCart,
+  Settings,
+} from "@mui/icons-material";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
+import { DRAWER_WIDTH, NAVIGATION_ITEMS } from "@/libs/constants";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import { useAppDispatch, useAppSelector } from "@/hooks/redux";
+import { setSidebarOpen } from "@/store/slices/uiSlice";
+import { LogoSection } from "../ui/LogoSection";
 
 const iconMap = {
   dashboard: Dashboard,
@@ -25,52 +36,80 @@ const iconMap = {
   inventory: Inventory,
   shopping_cart: ShoppingCart,
   settings: Settings,
-}
+};
 
 export const SideBar: React.FC = () => {
-  const pathname = usePathname()
+  const pathname = usePathname();
+  const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
 
-  return (
-    <Drawer
-      variant="permanent"
+  const isSidebarOpen = useAppSelector((state) => state.ui.isSidebarOpen);
+
+  const handleClose = () => {
+    dispatch(setSidebarOpen(false));
+  };
+
+  const drawerContent = (
+    <Box
       sx={{
-        width: DRAWER_WIDTH,
-        flexShrink: 0,
-        "& .MuiDrawer-paper": {
-          width: DRAWER_WIDTH,
-          boxSizing: "border-box",
-          bgcolor: "background.paper",
-          borderRight: "1px solid",
-          borderColor: "divider",
-        },
+        display: "flex",
+        flexDirection: "column",
+        height: "100%",
+        justifyContent: "space-between",
       }}
     >
-      {/* Logo/Brand Section */}
-      <Box
-        sx={{
-          p: 3,
-          display: "flex",
-          alignItems: "center",
-          gap: 2,
-        }}
-      >
-        <Avatar
-          sx={{
-            bgcolor: "primary.main",
-            width: 40,
-            height: 40,
-          }}
-        >
-          <Dashboard />
-        </Avatar>
-        <Typography variant="h6" component="div" fontWeight={600}>
-          Dashboard
-        </Typography>
+      <Box>
+        {/* Logo / Branding */}
+        <LogoSection/>
+
+        <Divider />
+
+        {/* Navigation Items */}
+        <List sx={{ px: 2, py: 1 }}>
+          {NAVIGATION_ITEMS.map((item) => {
+            const Icon = iconMap[item.icon as keyof typeof iconMap];
+            const isActive = pathname === item.path;
+
+            return (
+              <ListItem key={item.title} disablePadding sx={{ mb: 0.5 }}>
+                <ListItemButton
+                  component={Link}
+                  href={item.path}
+                  onClick={() => isMobile && handleClose()}
+                  sx={{
+                    borderRadius: 2,
+                    py: 1,
+                    bgcolor: isActive ? "primary.main" : "transparent",
+                    color: isActive ? "primary.contrastText" : "text.primary",
+                    "&:hover": {
+                      bgcolor: isActive ? "primary.dark" : "action.hover",
+                    },
+                  }}
+                >
+                  <ListItemIcon
+                    sx={{
+                      color: isActive
+                        ? "primary.contrastText"
+                        : "text.secondary",
+                      minWidth: 40,
+                    }}
+                  >
+                    <Icon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={item.title}
+                    primaryTypographyProps={{
+                      fontWeight: isActive ? 600 : 400,
+                    }}
+                  />
+                </ListItemButton>
+              </ListItem>
+            );
+          })}
+        </List>
       </Box>
 
-      <Divider />
-
-      {/* User Profile Section */}
+      {/* Footer */}
       <Box sx={{ p: 2 }}>
         <Box
           sx={{
@@ -82,13 +121,7 @@ export const SideBar: React.FC = () => {
             borderRadius: 2,
           }}
         >
-          <Avatar
-            sx={{
-              bgcolor: "secondary.main",
-              width: 36,
-              height: 36,
-            }}
-          >
+          <Avatar sx={{ bgcolor: "secondary.main", width: 36, height: 36 }}>
             JD
           </Avatar>
           <Box>
@@ -101,49 +134,29 @@ export const SideBar: React.FC = () => {
           </Box>
         </Box>
       </Box>
+    </Box>
+  );
 
-      <Divider />
-
-      {/* Navigation Items */}
-      <List sx={{ px: 2, py: 1 }}>
-        {NAVIGATION_ITEMS.map((item) => {
-          const IconComponent = iconMap[item.icon as keyof typeof iconMap]
-          const isActive = pathname === item.path
-
-          return (
-            <ListItem key={item.title} disablePadding sx={{ mb: 0.5 }}>
-              <ListItemButton
-                component={Link}
-                href={item.path}
-                sx={{
-                  borderRadius: 2,
-                  py: 1.5,
-                  bgcolor: isActive ? "primary.main" : "transparent",
-                  color: isActive ? "primary.contrastText" : "text.primary",
-                  "&:hover": {
-                    bgcolor: isActive ? "primary.dark" : "action.hover",
-                  },
-                }}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: isActive ? "primary.contrastText" : "text.secondary",
-                    minWidth: 40,
-                  }}
-                >
-                  <IconComponent />
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.title}
-                  primaryTypographyProps={{
-                    fontWeight: isActive ? 600 : 400,
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          )
-        })}
-      </List>
-    </Drawer>
-  )
-}
+  return (
+    <>
+      <Drawer
+        open={isMobile ? isSidebarOpen : true}
+        onClose={handleClose}
+        variant={isMobile ? "temporary" : "permanent"}
+        sx={{
+          width: DRAWER_WIDTH,
+          flexShrink: 0,
+          "& .MuiDrawer-paper": {
+            width: DRAWER_WIDTH,
+            boxSizing: "border-box",
+            borderRight: "1px solid",
+            borderColor: "divider",
+            bgcolor: "background.paper",
+          },
+        }}
+      >
+        {drawerContent}
+      </Drawer>
+    </>
+  );
+};

@@ -1,19 +1,16 @@
+import { UIstate } from "@/types/slice.types";
+import { ThemeMode } from "@/types/util.types";
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
-type ThemeMode = "light" | "dark";
-
-interface ThemeState {
-  mode: ThemeMode;
-}
-
-const initialState: ThemeState = {
+const initialState: UIstate = {
   mode:
     ((typeof window !== "undefined" &&
       localStorage.getItem("theme")) as ThemeMode) || "light",
+  isSidebarOpen: false,
 };
 
-const themeSlice = createSlice({
-  name: "theme",
+const uiSlice = createSlice({
+  name: "ui",
   initialState,
   reducers: {
     toggleTheme(state) {
@@ -26,8 +23,15 @@ const themeSlice = createSlice({
       state.mode = action.payload;
       localStorage.setItem("theme", action.payload);
     },
+    toggleSidebar(state) {
+      state.isSidebarOpen = !state.isSidebarOpen;
+    },
+    setSidebarOpen(state, action: PayloadAction<boolean>) {
+      state.isSidebarOpen = action.payload;
+    },
   },
 });
 
-export const { toggleTheme, setTheme } = themeSlice.actions;
-export default themeSlice.reducer;
+export const { toggleTheme, setTheme, toggleSidebar, setSidebarOpen } =
+  uiSlice.actions;
+export default uiSlice.reducer;

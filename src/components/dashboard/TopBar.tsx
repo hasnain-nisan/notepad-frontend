@@ -1,11 +1,10 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
+import type React from "react";
+import { useState } from "react";
 import {
   AppBar,
   Toolbar,
-  Typography,
   IconButton,
   Badge,
   Menu,
@@ -14,11 +13,15 @@ import {
   Box,
   InputBase,
   alpha,
-} from "@mui/material"
-import { Search, Notifications } from "@mui/icons-material"
-import { styled } from "@mui/material/styles"
-import { DRAWER_WIDTH } from "@/libs/constants"
-import ThemeToggleButton from "../ui/ThemeToggleButton"
+} from "@mui/material";
+import { Search, Notifications } from "@mui/icons-material";
+import { styled } from "@mui/material/styles";
+import { DRAWER_WIDTH } from "@/libs/constants";
+import ThemeToggleButton from "../ui/ThemeToggleButton";
+import { useIsMobile } from "@/hooks/useIsMobile";
+import MenuIcon from "@mui/icons-material/Menu";
+import { useAppDispatch } from "@/hooks/redux";
+import { toggleSidebar } from "@/store/slices/uiSlice";
 
 const SearchContainer = styled("div")(({ theme }) => ({
   position: "relative",
@@ -33,7 +36,7 @@ const SearchContainer = styled("div")(({ theme }) => ({
     marginLeft: theme.spacing(1),
     width: "auto",
   },
-}))
+}));
 
 const SearchIconWrapper = styled("div")(({ theme }) => ({
   padding: theme.spacing(0, 2),
@@ -43,7 +46,7 @@ const SearchIconWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-}))
+}));
 
 const StyledInputBase = styled(InputBase)(({ theme }) => ({
   color: "inherit",
@@ -59,33 +62,36 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
       },
     },
   },
-}))
+}));
 
-type TopBarProps = object
+type TopBarProps = object;
 
 export const TopBar: React.FC<TopBarProps> = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
-  const [notificationAnchorEl, setNotificationAnchorEl] = useState<null | HTMLElement>(null)
+  const isMobile = useIsMobile();
+  const dispatch = useAppDispatch();
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [notificationAnchorEl, setNotificationAnchorEl] =
+    useState<null | HTMLElement>(null);
 
   const handleProfileMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget)
-  }
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleNotificationMenuOpen = (event: React.MouseEvent<HTMLElement>) => {
-    setNotificationAnchorEl(event.currentTarget)
-  }
+    setNotificationAnchorEl(event.currentTarget);
+  };
 
   const handleMenuClose = () => {
-    setAnchorEl(null)
-    setNotificationAnchorEl(null)
-  }
+    setAnchorEl(null);
+    setNotificationAnchorEl(null);
+  };
 
   return (
     <AppBar
       position="fixed"
       sx={{
-        width: `calc(100% - ${DRAWER_WIDTH}px)`,
-        ml: `${DRAWER_WIDTH}px`,
+        width: isMobile ? "100%" : `calc(100% - ${DRAWER_WIDTH}px)`,
+        ml: isMobile ? 0 : `${DRAWER_WIDTH}px`,
         bgcolor: "background.paper",
         color: "text.primary",
         boxShadow: "0 1px 3px rgba(0, 0, 0, 0.12)",
@@ -94,16 +100,26 @@ export const TopBar: React.FC<TopBarProps> = () => {
       }}
     >
       <Toolbar>
-        <Typography variant="h6" noWrap component="div" sx={{ flexGrow: 1 }}>
-          Welcome back, John!
-        </Typography>
+        {isMobile && (
+          <IconButton
+            color="inherit"
+            edge="start"
+            sx={{ mr: 2 }}
+            onClick={() => dispatch(toggleSidebar())}
+          >
+            <MenuIcon />
+          </IconButton>
+        )}
 
         {/* Search Bar */}
         <SearchContainer>
           <SearchIconWrapper>
             <Search />
           </SearchIconWrapper>
-          <StyledInputBase placeholder="Search…" inputProps={{ "aria-label": "search" }} />
+          <StyledInputBase
+            placeholder="Search…"
+            inputProps={{ "aria-label": "search" }}
+          />
         </SearchContainer>
 
         <Box sx={{ display: "flex", alignItems: "center", ml: 2 }}>
@@ -111,15 +127,27 @@ export const TopBar: React.FC<TopBarProps> = () => {
           <ThemeToggleButton />
 
           {/* Notifications */}
-          <IconButton size="large" color="inherit" onClick={handleNotificationMenuOpen} sx={{ mr: 1 }}>
+          <IconButton
+            size="large"
+            color="inherit"
+            onClick={handleNotificationMenuOpen}
+            sx={{ mr: 1 }}
+          >
             <Badge badgeContent={4} color="error">
               <Notifications />
             </Badge>
           </IconButton>
 
           {/* Profile */}
-          <IconButton size="large" edge="end" color="inherit" onClick={handleProfileMenuOpen}>
-            <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main" }}>JD</Avatar>
+          <IconButton
+            size="large"
+            edge="end"
+            color="inherit"
+            onClick={handleProfileMenuOpen}
+          >
+            <Avatar sx={{ width: 32, height: 32, bgcolor: "secondary.main" }}>
+              JD
+            </Avatar>
           </IconButton>
         </Box>
 
@@ -166,5 +194,5 @@ export const TopBar: React.FC<TopBarProps> = () => {
         </Menu>
       </Toolbar>
     </AppBar>
-  )
-}
+  );
+};

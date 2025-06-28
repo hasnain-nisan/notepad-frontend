@@ -6,7 +6,7 @@ import { ThemeProvider } from "@mui/material/styles";
 import { Toaster } from "react-hot-toast";
 
 export function MainThemeProvider({ children }: ProvidersProps) {
-  const mode = useAppSelector((state) => state.theme.mode);
+  const mode = useAppSelector((state) => state.ui.mode);
   const theme = getTheme(mode);
 
   return (
