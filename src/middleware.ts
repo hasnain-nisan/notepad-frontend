@@ -2,7 +2,7 @@ import { NextRequestWithAuth, withAuth } from "next-auth/middleware";
 import { NextResponse } from "next/server";
 
 const publicAuthRoutes = ["/login", "/register", "/forgot-password"];
-const DEFAULT_REDIRECT_PATH = "/dashboard";
+const DEFAULT_REDIRECT_PATH = "/";
 
 export default withAuth(
   function middleware(req: NextRequestWithAuth) {
@@ -10,12 +10,23 @@ export default withAuth(
     const { pathname } = req.nextUrl;
     const token = req.nextauth.token;
 
-    if (pathname === "/") {
+    // if (pathname === "/") {
+    //   const url = req.nextUrl.clone();
+    //   url.pathname = token ? DEFAULT_REDIRECT_PATH : "/login";
+    //   return NextResponse.redirect(url);
+    // }
+
+    // If the user is not authenticated and tries to access a protected route,
+    // redirect them to the login page with a callback URL
+    if (!token && pathname.startsWith("/dashboard")) {
       const url = req.nextUrl.clone();
-      url.pathname = token ? DEFAULT_REDIRECT_PATH : "/login";
+      url.pathname = "/login";
+      url.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(url);
     }
 
+    // If the user is authenticated and tries to access a public auth route,
+    // redirect them to the default redirect path
     if (token && publicAuthRoutes.includes(pathname)) {
       const url = req.nextUrl.clone();
       url.pathname = DEFAULT_REDIRECT_PATH;

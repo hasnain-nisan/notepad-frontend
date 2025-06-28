@@ -1,6 +1,5 @@
 import { ApiEndpoints } from "@/types/api.types";
 
-
 export const API_BASE_URL = process.env.API_BASE_URL || "http://localhost:3001";
 
 export const API_ENDPOINTS: ApiEndpoints = {
@@ -35,3 +34,36 @@ export const STORAGE_KEYS = {
 } as const;
 
 export const DRAWER_WIDTH = 240;
+
+export const NAVIGATION_ITEMS = [
+  {
+    title: "Dashboard",
+    icon: "dashboard",
+    path: "/dashboard",
+  },
+  {
+    title: "Analytics",
+    icon: "analytics",
+    path: "/dashboard/analytics",
+  },
+  {
+    title: "Users",
+    icon: "people",
+    path: "/dashboard/users",
+  },
+  {
+    title: "Products",
+    icon: "inventory",
+    path: "/dashboard/products",
+  },
+  {
+    title: "Orders",
+    icon: "shopping_cart",
+    path: "/dashboard/orders",
+  },
+  {
+    title: "Settings",
+    icon: "settings",
+    path: "/dashboard/settings",
+  },
+];
