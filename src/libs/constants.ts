@@ -16,6 +16,7 @@ export const API_ENDPOINTS: ApiEndpoints = {
     create: "/notes",
     update: (id: string) => `/notes/${id}`,
     delete: (id: string) => `/notes/${id}`,
+    toggleFavorite: (id: string) => `/notes/${id}/favorite`,
   },
 };
 
@@ -42,9 +43,9 @@ export const NAVIGATION_ITEMS = [
     path: "/dashboard",
   },
   {
-    title: "Notes",
+    title: "Note",
     icon: "note_alt",
-    path: "/dashboard/notes",
+    path: "/dashboard/note",
   },
   {
     title: "Profile",

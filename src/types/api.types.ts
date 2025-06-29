@@ -35,5 +35,6 @@ export interface ApiEndpoints {
     create: string;
     update: (id: string) => string;
     delete: (id: string) => string;
+    toggleFavorite: (id: string) => string;
   };
 }

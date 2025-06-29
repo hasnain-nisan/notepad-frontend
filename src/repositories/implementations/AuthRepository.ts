@@ -6,59 +6,23 @@ import {
   RefreshTokenRequest,
   RefreshTokenResponse,
 } from "@/types/auth.types";
-import { ApiResponse, ApiError } from "@/types/api.types";
-import { API_BASE_URL, API_ENDPOINTS } from "@/libs/constants";
+import { API_ENDPOINTS } from "@/libs/constants";
 import { Session } from "next-auth";
 import { getSession, signOut } from "next-auth/react";
+import { makeApiRequest } from "@/libs/makeApiRequest";
 
 export class AuthRepository implements IAuthRepository {
-  private baseUrl: string;
-
-  constructor() {
-    this.baseUrl = API_BASE_URL;
-  }
-
-  private async makeRequest<T>(
-    endpoint: string,
-    options: RequestInit = {}
-  ): Promise<T> {
-    const url = `${this.baseUrl}${endpoint}`;
-
-    const defaultOptions: RequestInit = {
-      headers: {
-        "Content-Type": "application/json",
-        ...options.headers,
-      },
-    };
-
-    const config = { ...defaultOptions, ...options };
-
-    try {
-      const response = await fetch(url, config);
-      const data: ApiResponse<T> | ApiError = await response.json();
-
-      if (!response.ok) {
-        throw new Error((data as ApiError).message || "Request failed");
-      }
-
-      return (data as ApiResponse<T>).data;
-    } catch (error) {
-      if (error instanceof Error) {
-        throw error;
-      }
-      throw new Error("Network error occurred");
-    }
-  }
+  constructor() {}
 
   async login(credentials: LoginCredentials): Promise<AuthResponse> {
-    return this.makeRequest<AuthResponse>(API_ENDPOINTS.auth.login, {
+    return makeApiRequest<AuthResponse>(API_ENDPOINTS.auth.login, {
       method: "POST",
       body: JSON.stringify(credentials),
     });
   }
 
   async register(credentials: RegisterCredentials): Promise<AuthResponse> {
-    return this.makeRequest<AuthResponse>(API_ENDPOINTS.auth.register, {
+    return makeApiRequest<AuthResponse>(API_ENDPOINTS.auth.register, {
       method: "POST",
       body: JSON.stringify(credentials),
     });
@@ -67,7 +31,7 @@ export class AuthRepository implements IAuthRepository {
   async refreshToken(
     request: RefreshTokenRequest
   ): Promise<RefreshTokenResponse> {
-    return this.makeRequest<RefreshTokenResponse>(API_ENDPOINTS.auth.refresh, {
+    return makeApiRequest<RefreshTokenResponse>(API_ENDPOINTS.auth.refresh, {
       method: "POST",
       body: JSON.stringify(request),
     });

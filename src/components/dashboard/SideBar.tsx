@@ -7,7 +7,6 @@ import {
   Box,
   Avatar,
   Typography,
-  Divider,
   ListItem,
   ListItemButton,
   ListItemIcon,
