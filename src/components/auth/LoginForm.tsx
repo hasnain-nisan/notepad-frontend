@@ -63,7 +63,7 @@ export function LoginForm() {
   };
 
   return (
-    <Card sx={{ maxWidth: 500, mx: "auto", mt: 4 }}>
+    <Card sx={{ maxWidth: 500, mx: "auto" }}>
       <CardContent sx={{ p: 4 }}>
         <Typography variant="h4" component="h1" gutterBottom align="center">
           Login
