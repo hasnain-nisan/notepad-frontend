@@ -22,6 +22,7 @@ import { Visibility, VisibilityOff, Email, Lock } from "@mui/icons-material";
 import { LoginFormData, loginSchema } from "@/libs/validations/login.schema";
 import { ROUTES } from "@/libs/constants";
 import toast from "react-hot-toast";
+import { LogoSection } from "../ui/LogoSection";
 
 export function LoginForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,9 +66,11 @@ export function LoginForm() {
   return (
     <Card sx={{ maxWidth: 500, mx: "auto" }}>
       <CardContent sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
+        <LogoSection typographyVariant="h4"/>
+
+        {/* <Typography variant="h4" component="h1" gutterBottom align="center">
           Login
-        </Typography>
+        </Typography> */}
 
         <Typography
           variant="body2"

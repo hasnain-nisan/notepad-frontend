@@ -32,6 +32,7 @@ import {
 } from "@/libs/validations/register.schema";
 import { AuthService } from "@/services/AuthService";
 import toast from "react-hot-toast";
+import { LogoSection } from "../ui/LogoSection";
 
 const authService = new AuthService();
 
@@ -88,9 +89,11 @@ export default function RegisterForm() {
   return (
     <Card sx={{ maxWidth: 500, mx: "auto" }}>
       <CardContent sx={{ p: 4 }}>
-        <Typography variant="h4" component="h1" gutterBottom align="center">
+        <LogoSection typographyVariant="h4"/>
+
+        {/* <Typography variant="h4" component="h1" gutterBottom align="center">
           Register
-        </Typography>
+        </Typography> */}
 
         <Typography
           variant="body2"

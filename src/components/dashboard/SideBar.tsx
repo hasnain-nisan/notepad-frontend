@@ -15,11 +15,8 @@ import {
 } from "@mui/material";
 import {
   Dashboard,
-  Analytics,
-  People,
-  Inventory,
-  ShoppingCart,
-  Settings,
+  NoteAlt,
+  Person,
 } from "@mui/icons-material";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
@@ -32,11 +29,8 @@ import { LogoutButton } from "../ui/LogoutButton";
 
 const iconMap = {
   dashboard: Dashboard,
-  analytics: Analytics,
-  people: People,
-  inventory: Inventory,
-  shopping_cart: ShoppingCart,
-  settings: Settings,
+  note_alt: NoteAlt,
+  person: Person,
 };
 
 export const SideBar: React.FC = () => {

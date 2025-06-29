@@ -4,7 +4,23 @@ import React from "react";
 import { Box, Typography, Avatar } from "@mui/material";
 import NoteAltIcon from "@mui/icons-material/NoteAlt";
 
-export const LogoSection: React.FC = () => {
+interface LogoSectionProps {
+  typographyVariant?:
+    | "h1"
+    | "h2"
+    | "h3"
+    | "h4"
+    | "h5"
+    | "h6"
+    | "subtitle1"
+    | "subtitle2"
+    | "body1"
+    | "body2";
+}
+
+export const LogoSection: React.FC<LogoSectionProps> = ({
+  typographyVariant = "h5",
+}) => {
   return (
     <Box
       sx={{
@@ -26,7 +42,7 @@ export const LogoSection: React.FC = () => {
         <NoteAltIcon sx={{ color: "primary.contrastText" }} />
       </Avatar>
       <Typography
-        variant="h5"
+        variant={typographyVariant}
         component="div"
         fontWeight={600}
         sx={{

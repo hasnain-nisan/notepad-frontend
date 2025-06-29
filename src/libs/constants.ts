@@ -33,7 +33,7 @@ export const STORAGE_KEYS = {
   USER: "user",
 } as const;
 
-export const DRAWER_WIDTH = 240;
+export const DRAWER_WIDTH = 250;
 
 export const NAVIGATION_ITEMS = [
   {
@@ -42,28 +42,13 @@ export const NAVIGATION_ITEMS = [
     path: "/dashboard",
   },
   {
-    title: "Analytics",
-    icon: "analytics",
-    path: "/dashboard/analytics",
+    title: "Notes",
+    icon: "note_alt",
+    path: "/dashboard/notes",
   },
   {
-    title: "Users",
-    icon: "people",
-    path: "/dashboard/users",
-  },
-  {
-    title: "Products",
-    icon: "inventory",
-    path: "/dashboard/products",
-  },
-  {
-    title: "Orders",
-    icon: "shopping_cart",
-    path: "/dashboard/orders",
-  },
-  {
-    title: "Settings",
-    icon: "settings",
-    path: "/dashboard/settings",
+    title: "Profile",
+    icon: "person",
+    path: "/dashboard/profile",
   },
 ];
