@@ -18,12 +18,12 @@ export default withAuth(
 
     // If the user is not authenticated and tries to access a protected route,
     // redirect them to the login page with a callback URL
-    if (!token && pathname.startsWith("/dashboard")) {
-      const url = req.nextUrl.clone();
-      url.pathname = "/login";
-      url.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(url);
-    }
+    // if (!token && pathname.startsWith("/dashboard")) {
+    //   const url = req.nextUrl.clone();
+    //   url.pathname = "/login";
+    //   url.searchParams.set("callbackUrl", pathname);
+    //   return NextResponse.redirect(url);
+    // }
 
     // If the user is authenticated and tries to access a public auth route,
     // redirect them to the default redirect path

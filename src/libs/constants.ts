@@ -53,3 +53,9 @@ export const NAVIGATION_ITEMS = [
     path: "/dashboard/profile",
   },
 ];
+
+
+export const NOTE_ROUTES: Record<string, string> = {
+  create: '/dashboard/note/create',
+  edit: '/dashboard/note/edit/[id]',
+}

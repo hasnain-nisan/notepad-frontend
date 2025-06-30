@@ -38,6 +38,8 @@ import {
   FavoriteBorder,
   AccessTime,
 } from "@mui/icons-material";
+import Link from "next/link";
+import { NOTE_ROUTES } from "@/libs/constants";
 
 // Mock data for notes
 export const mockNotes = [
@@ -233,14 +235,16 @@ export default function NotesPage() {
           <Typography variant="h4" component="h1" fontWeight={600}>
             My Notes
           </Typography>
-          <Button
-            variant="contained"
-            startIcon={<Add />}
-            onClick={() => setCreateDialogOpen(true)}
-            sx={{ borderRadius: 3 }}
-          >
-            Create Note
-          </Button>
+          <Link href={NOTE_ROUTES.create} passHref legacyBehavior>
+            <Button
+              component="a"
+              variant="contained"
+              startIcon={<Add />}
+              sx={{ borderRadius: 3 }}
+            >
+              Create Note
+            </Button>
+          </Link>
         </Box>
 
         {/* Search and Filter Bar */}
