@@ -56,6 +56,6 @@ export const NAVIGATION_ITEMS = [
 
 
 export const NOTE_ROUTES: Record<string, string> = {
-  create: '/dashboard/note/create',
-  edit: '/dashboard/note/edit/[id]',
+  CREATE: '/dashboard/note/create',
+  EDIT: '/dashboard/note/edit/[id]',
 }

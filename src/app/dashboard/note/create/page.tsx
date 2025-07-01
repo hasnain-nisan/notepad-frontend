@@ -30,7 +30,7 @@ import {
   Add,
 } from "@mui/icons-material";
 import { ChromePicker } from "react-color";
-import RichTextEditor from "@/components/note/RichTextEditor";
+import RichTextEditor from "@/components/note/create/RichTextEditor";
 
 const categories = [
   "Work",
