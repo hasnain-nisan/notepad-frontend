@@ -193,7 +193,7 @@ export default function CreateNotePage() {
       {!isPreviewMode ? (
         <Grid container spacing={4}>
           {/* Left Column - Form Fields */}
-          <Grid item xs={12} md={8}>
+          <Grid size={{xs: 12, md: 8}}>
             <Paper sx={{ p: 3, mb: 3 }}>
               <Typography variant="h6" gutterBottom>
                 Basic Information
