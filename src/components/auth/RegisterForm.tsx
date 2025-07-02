@@ -30,11 +30,9 @@ import {
   RegisterFormData,
   registerSchema,
 } from "@/libs/validations/register.schema";
-import { AuthService } from "@/services/AuthService";
 import toast from "react-hot-toast";
 import { LogoSection } from "../ui/LogoSection";
-
-const authService = new AuthService();
+import { ServiceFactory } from "@/services/ServiceFactory";
 
 export default function RegisterForm() {
   const [showPassword, setShowPassword] = useState(false);
@@ -61,11 +59,14 @@ export default function RegisterForm() {
     setError(null);
 
     try {
+      // Create an instance of AuthService
+      const authService = ServiceFactory.getAuthService();
+
       // Call the AuthService to register the user
       await authService.register(data);
 
       toast.success("Registration completed successfully, now logging in");
-      
+
       const result = await signIn("credentials", {
         email: data.email,
         password: data.password,
@@ -89,7 +90,7 @@ export default function RegisterForm() {
   return (
     <Card sx={{ maxWidth: 500, mx: "auto" }}>
       <CardContent sx={{ p: 4 }}>
-        <LogoSection typographyVariant="h4"/>
+        <LogoSection typographyVariant="h4" />
 
         {/* <Typography variant="h4" component="h1" gutterBottom align="center">
           Register
@@ -234,10 +235,16 @@ export default function RegisterForm() {
                   endAdornment: (
                     <InputAdornment position="end">
                       <IconButton
-                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                        onClick={() =>
+                          setShowConfirmPassword(!showConfirmPassword)
+                        }
                         edge="end"
                       >
-                        {showConfirmPassword ? <VisibilityOff /> : <Visibility />}
+                        {showConfirmPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
                       </IconButton>
                     </InputAdornment>
                   ),

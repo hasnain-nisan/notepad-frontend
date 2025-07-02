@@ -1,8 +1,9 @@
 import { RepositoryFactory } from "@/repositories/RepositoryFactory";
 import { INoteRepository } from "@/repositories/interfaces/INoteRepository";
 import { Note } from "@/types/note.types";
+import { INoteService } from "../interfaces/INoteService";
 
-export class NoteService {
+export class NoteService implements INoteService {
   private noteRepository: INoteRepository;
 
   constructor() {

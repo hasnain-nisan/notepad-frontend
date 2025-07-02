@@ -51,7 +51,7 @@ export class AuthRepository implements IAuthRepository {
   }
   async verifyToken(token: string): Promise<boolean> {
     try {
-      await this.makeRequest<void>("/auth/verify", {
+      await makeApiRequest<void>("/auth/verify", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

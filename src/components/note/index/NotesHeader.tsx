@@ -78,9 +78,9 @@ export default function NotesHeader({
           My Notes
         </Typography>
 
-        <Link href={NOTE_ROUTES.CREATE} passHref legacyBehavior>
+        <Link href={NOTE_ROUTES.CREATE} passHref>
           <Button
-            component="a"
+            // component="a"
             variant="contained"
             startIcon={<Add />}
             sx={{ 

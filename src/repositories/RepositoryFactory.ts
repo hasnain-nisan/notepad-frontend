@@ -1,23 +1,23 @@
-import { IAuthRepository } from './interfaces/IAuthRepository';
-import { AuthRepository } from './implementations/AuthRepository';
-import { INoteRepository } from './interfaces/INoteRepository';
-import { NoteRepository } from './implementations/NoteRepository';
+import { AuthRepository } from "./implementations/AuthRepository";
+import { NoteRepository } from "./implementations/NoteRepository";
+import { IAuthRepository } from "./interfaces/IAuthRepository";
+import { INoteRepository } from "./interfaces/INoteRepository";
 
 export class RepositoryFactory {
-  private static authRepository: IAuthRepository;
-  private static noteRepository: INoteRepository;
+  private static instances = new Map<string, unknown>();
+
+  static getRepository<T>(key: string, creator: () => T): T {
+    if (!this.instances.has(key)) {
+      this.instances.set(key, creator());
+    }
+    return this.instances.get(key) as T;
+  }
 
   static getAuthRepository(): IAuthRepository {
-    if (!this.authRepository) {
-      this.authRepository = new AuthRepository();
-    }
-    return this.authRepository;
+    return this.getRepository("auth", () => new AuthRepository());
   }
 
   static getNoteRepository(): INoteRepository {
-    if (!this.noteRepository) {
-      this.noteRepository = new NoteRepository();
-    }
-    return this.noteRepository;
+    return this.getRepository("note", () => new NoteRepository());
   }
 }

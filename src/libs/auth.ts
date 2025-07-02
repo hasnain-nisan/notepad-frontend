@@ -1,8 +1,7 @@
+import { ServiceFactory } from "@/services/ServiceFactory";
 import { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { AuthService } from "@/services/AuthService";
 
-const authService = new AuthService();
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -18,6 +17,7 @@ export const authOptions: NextAuthOptions = {
         }
 
         try {
+          const authService = ServiceFactory.getAuthService();
           const response = await authService.login({
             email: credentials.email,
             password: credentials.password,

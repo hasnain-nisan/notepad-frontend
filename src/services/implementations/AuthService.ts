@@ -6,8 +6,9 @@ import {
   AuthResponse,
 } from "@/types/auth.types";
 import { Session } from "next-auth";
+import { IAuthService } from "../interfaces/IAuthService";
 
-export class AuthService {
+export class AuthService implements IAuthService {
   private authRepository: IAuthRepository;
 
   constructor() {

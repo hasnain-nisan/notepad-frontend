@@ -2,15 +2,15 @@
 
 import { Button } from "@mui/material";
 import LogoutIcon from "@mui/icons-material/Logout";
-import { AuthService } from "@/services/AuthService";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/libs/constants";
+import { ServiceFactory } from "@/services/ServiceFactory";
 
-const authService = new AuthService();
 
 export const LogoutButton = () => {
-    const router = useRouter();
+  const router = useRouter();
   const handleLogout = async () => {
+    const authService = ServiceFactory.getAuthService();
     await authService.logout();
     router.push(ROUTES.HOME);
   };
