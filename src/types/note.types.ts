@@ -163,3 +163,10 @@ export const categories = [
   "Finance",
   "Programming"
 ];
+
+export interface CreateNoteHeaderProps {
+  onBack: () => void;
+  isPreviewMode: boolean;
+  onTogglePreview: () => void;
+  onSave: () => void;
+}
