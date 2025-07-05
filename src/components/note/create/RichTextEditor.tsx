@@ -1,7 +1,7 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useRef } from "react"
+import type React from "react";
+import { useState, useRef } from "react";
 import {
   Editor,
   EditorState,
@@ -11,7 +11,7 @@ import {
   convertFromRaw,
   getDefaultKeyBinding,
   KeyBindingUtil,
-} from "draft-js"
+} from "draft-js";
 import {
   Box,
   Paper,
@@ -30,7 +30,7 @@ import {
   Select,
   FormControl,
   Tooltip,
-} from "@mui/material"
+} from "@mui/material";
 import {
   FormatBold,
   FormatItalic,
@@ -45,8 +45,8 @@ import {
   Redo,
   FormatColorText,
   FormatColorFill,
-} from "@mui/icons-material"
-import "draft-js/dist/Draft.css"
+} from "@mui/icons-material";
+import "draft-js/dist/Draft.css";
 
 // Custom styles for the editor
 const editorStyles = {
@@ -66,7 +66,7 @@ const editorStyles = {
     gap: "8px",
     alignItems: "center",
   },
-}
+};
 
 // Block style map
 const blockStyleMap = {
@@ -103,7 +103,7 @@ const blockStyleMap = {
     fontSize: "14px",
     margin: "8px 0",
   },
-}
+};
 
 // Inline style map
 const inlineStyleMap = {
@@ -114,14 +114,15 @@ const inlineStyleMap = {
     fontFamily: "monospace",
     fontSize: "0.9em",
   },
-}
+};
 
 interface RichTextEditorProps {
-  value?: string
-  onChange?: (content: string) => void
-  placeholder?: string
-  readOnly?: boolean
-  minHeight?: number
+  value?: string;
+  onChange?: (content: string) => void;
+  placeholder?: string;
+  readOnly?: boolean;
+  minHeight?: number;
+  error?: boolean;
 }
 
 const RichTextEditor: React.FC<RichTextEditorProps> = ({
@@ -130,110 +131,132 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
   placeholder = "Start writing...",
   readOnly = false,
   minHeight = 300,
+  error = false,
 }) => {
   // Initialize editor state
   const [editorState, setEditorState] = useState(() => {
     if (value) {
       try {
-        const contentState = convertFromRaw(JSON.parse(value))
-        return EditorState.createWithContent(contentState)
+        const contentState = convertFromRaw(JSON.parse(value));
+        return EditorState.createWithContent(contentState);
       } catch {
-        return EditorState.createEmpty()
+        return EditorState.createEmpty();
       }
     }
-    return EditorState.createEmpty()
-  })
+    return EditorState.createEmpty();
+  });
 
   // Dialog states
-  const [linkDialogOpen, setLinkDialogOpen] = useState(false)
-  const [imageDialogOpen, setImageDialogOpen] = useState(false)
-  const [linkUrl, setLinkUrl] = useState("")
-  const [imageUrl, setImageUrl] = useState("")
-  const [colorMenuAnchor, setColorMenuAnchor] = useState<null | HTMLElement>(null)
-  const [highlightMenuAnchor, setHighlightMenuAnchor] = useState<null | HTMLElement>(null)
+  const [linkDialogOpen, setLinkDialogOpen] = useState(false);
+  const [imageDialogOpen, setImageDialogOpen] = useState(false);
+  const [linkUrl, setLinkUrl] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+  const [colorMenuAnchor, setColorMenuAnchor] = useState<null | HTMLElement>(
+    null
+  );
+  const [highlightMenuAnchor, setHighlightMenuAnchor] =
+    useState<null | HTMLElement>(null);
 
-  const editorRef = useRef<Editor>(null)
+  const editorRef = useRef<Editor>(null);
 
   // Handle editor state changes
   const handleEditorChange = (newEditorState: EditorState) => {
-    setEditorState(newEditorState)
+    setEditorState(newEditorState);
     if (onChange) {
-      const contentState = newEditorState.getCurrentContent()
-      const raw = convertToRaw(contentState)
-      onChange(JSON.stringify(raw))
+      const contentState = newEditorState.getCurrentContent();
+      const raw = convertToRaw(contentState);
+      onChange(JSON.stringify(raw));
     }
-  }
+  };
 
   // Focus editor
   const focusEditor = () => {
     if (editorRef.current) {
-      editorRef.current.focus()
+      editorRef.current.focus();
     }
-  }
+  };
 
   // Inline style handlers
   const handleInlineStyle = (style: string) => {
-    handleEditorChange(RichUtils.toggleInlineStyle(editorState, style))
-  }
+    handleEditorChange(RichUtils.toggleInlineStyle(editorState, style));
+  };
 
   // Block type handlers
   const handleBlockType = (blockType: string) => {
-    handleEditorChange(RichUtils.toggleBlockType(editorState, blockType))
-  }
+    handleEditorChange(RichUtils.toggleBlockType(editorState, blockType));
+  };
 
   // Check if inline style is active
   const isInlineStyleActive = (style: string) => {
-    return editorState.getCurrentInlineStyle().has(style)
-  }
+    return editorState.getCurrentInlineStyle().has(style);
+  };
 
   // Check if block type is active
   const isBlockTypeActive = (blockType: string) => {
-    const selection = editorState.getSelection()
-    const blockKey = selection.getStartKey()
-    const currentBlock = editorState.getCurrentContent().getBlockForKey(blockKey)
-    return currentBlock.getType() === blockType
-  }
+    const selection = editorState.getSelection();
+    const blockKey = selection.getStartKey();
+    const currentBlock = editorState
+      .getCurrentContent()
+      .getBlockForKey(blockKey);
+    return currentBlock.getType() === blockType;
+  };
 
   // Link handlers
   const handleAddLink = () => {
-    const selection = editorState.getSelection()
+    const selection = editorState.getSelection();
     if (!selection.isCollapsed()) {
-      setLinkDialogOpen(true)
+      setLinkDialogOpen(true);
     }
-  }
+  };
 
   const confirmLink = () => {
-    const contentState = editorState.getCurrentContent()
-    const contentStateWithEntity = contentState.createEntity("LINK", "MUTABLE", {
-      url: linkUrl,
-    })
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity(
+      "LINK",
+      "MUTABLE",
+      {
+        url: linkUrl,
+      }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
     const newEditorState = EditorState.set(editorState, {
       currentContent: contentStateWithEntity,
-    })
-    handleEditorChange(RichUtils.toggleLink(newEditorState, newEditorState.getSelection(), entityKey))
-    setLinkDialogOpen(false)
-    setLinkUrl("")
-  }
+    });
+    handleEditorChange(
+      RichUtils.toggleLink(
+        newEditorState,
+        newEditorState.getSelection(),
+        entityKey
+      )
+    );
+    setLinkDialogOpen(false);
+    setLinkUrl("");
+  };
 
   // Image handlers
   const handleAddImage = () => {
-    setImageDialogOpen(true)
-  }
+    setImageDialogOpen(true);
+  };
 
   const confirmImage = () => {
-    const contentState = editorState.getCurrentContent()
-    const contentStateWithEntity = contentState.createEntity("IMAGE", "IMMUTABLE", {
-      src: imageUrl,
-    })
-    const entityKey = contentStateWithEntity.getLastCreatedEntityKey()
+    const contentState = editorState.getCurrentContent();
+    const contentStateWithEntity = contentState.createEntity(
+      "IMAGE",
+      "IMMUTABLE",
+      {
+        src: imageUrl,
+      }
+    );
+    const entityKey = contentStateWithEntity.getLastCreatedEntityKey();
     const newEditorState = EditorState.set(editorState, {
       currentContent: contentStateWithEntity,
-    })
-    handleEditorChange(AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, " "))
-    setImageDialogOpen(false)
-    setImageUrl("")
-  }
+    });
+    handleEditorChange(
+      AtomicBlockUtils.insertAtomicBlock(newEditorState, entityKey, " ")
+    );
+    setImageDialogOpen(false);
+    setImageUrl("");
+  };
 
   // Color handlers
   const colors = [
@@ -272,52 +295,58 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
     "#003700",
     "#002966",
     "#3d1466",
-  ]
+  ];
 
   const handleColorChange = (color: string) => {
-    const newEditorState = RichUtils.toggleInlineStyle(editorState, `COLOR_${color.replace("#", "")}`)
-    handleEditorChange(newEditorState)
-    setColorMenuAnchor(null)
-  }
+    const newEditorState = RichUtils.toggleInlineStyle(
+      editorState,
+      `COLOR_${color.replace("#", "")}`
+    );
+    handleEditorChange(newEditorState);
+    setColorMenuAnchor(null);
+  };
 
   const handleHighlightChange = (color: string) => {
-    const newEditorState = RichUtils.toggleInlineStyle(editorState, `HIGHLIGHT_${color.replace("#", "")}`)
-    handleEditorChange(newEditorState)
-    setHighlightMenuAnchor(null)
-  }
+    const newEditorState = RichUtils.toggleInlineStyle(
+      editorState,
+      `HIGHLIGHT_${color.replace("#", "")}`
+    );
+    handleEditorChange(newEditorState);
+    setHighlightMenuAnchor(null);
+  };
 
   // Key binding
   const keyBindingFn = (e: React.KeyboardEvent) => {
     if (KeyBindingUtil.hasCommandModifier(e)) {
       switch (e.keyCode) {
         case 66: // B
-          return "bold"
+          return "bold";
         case 73: // I
-          return "italic"
+          return "italic";
         case 85: // U
-          return "underline"
+          return "underline";
         case 75: // K
-          return "add-link"
+          return "add-link";
         default:
-          return getDefaultKeyBinding(e)
+          return getDefaultKeyBinding(e);
       }
     }
-    return getDefaultKeyBinding(e)
-  }
+    return getDefaultKeyBinding(e);
+  };
 
   const handleKeyCommand = (command: string) => {
     if (command === "add-link") {
-      handleAddLink()
-      return "handled"
+      handleAddLink();
+      return "handled";
     }
 
-    const newState = RichUtils.handleKeyCommand(editorState, command)
+    const newState = RichUtils.handleKeyCommand(editorState, command);
     if (newState) {
-      handleEditorChange(newState)
-      return "handled"
+      handleEditorChange(newState);
+      return "handled";
     }
-    return "not-handled"
-  }
+    return "not-handled";
+  };
 
   // Block renderer for images
   const blockRendererFn = (block: any) => {
@@ -325,13 +354,19 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       return {
         component: ImageComponent,
         editable: false,
-      }
+      };
     }
-    return null
-  }
+    return null;
+  };
 
   return (
-    <Paper variant="outlined" sx={{ overflow: "hidden" }}>
+    <Paper
+      variant="outlined"
+      sx={{
+        overflow: "hidden",
+        borderColor: error ? "error.main" : "divider",
+      }}
+    >
       {/* Toolbar */}
       <Box sx={editorStyles.toolbar}>
         {/* History */}
@@ -365,10 +400,10 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               isBlockTypeActive("header-one")
                 ? "header-one"
                 : isBlockTypeActive("header-two")
-                  ? "header-two"
-                  : isBlockTypeActive("header-three")
-                    ? "header-three"
-                    : "unstyled"
+                ? "header-two"
+                : isBlockTypeActive("header-three")
+                ? "header-three"
+                : "unstyled"
             }
             onChange={(e) => handleBlockType(e.target.value)}
             displayEmpty
@@ -384,7 +419,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         {/* Text Formatting */}
         <ToggleButtonGroup size="small">
-          <ToggleButton value="bold" selected={isInlineStyleActive("BOLD")} onChange={() => handleInlineStyle("BOLD")}>
+          <ToggleButton
+            value="bold"
+            selected={isInlineStyleActive("BOLD")}
+            onChange={() => handleInlineStyle("BOLD")}
+          >
             <Tooltip title="Bold (Ctrl+B)">
               <FormatBold fontSize="small" />
             </Tooltip>
@@ -407,7 +446,11 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
               <FormatUnderlined fontSize="small" />
             </Tooltip>
           </ToggleButton>
-          <ToggleButton value="code" selected={isInlineStyleActive("CODE")} onChange={() => handleInlineStyle("CODE")}>
+          <ToggleButton
+            value="code"
+            selected={isInlineStyleActive("CODE")}
+            onChange={() => handleInlineStyle("CODE")}
+          >
             <Tooltip title="Inline Code">
               <Code fontSize="small" />
             </Tooltip>
@@ -513,15 +556,29 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
           readOnly={readOnly}
           keyBindingFn={keyBindingFn}
           handleKeyCommand={handleKeyCommand}
-          blockStyleFn={(block) => blockStyleMap[block.getType() as keyof typeof blockStyleMap]}
+          blockStyleFn={(block) =>
+            blockStyleMap[block.getType() as keyof typeof blockStyleMap]
+          }
           customStyleMap={inlineStyleMap}
           blockRendererFn={blockRendererFn}
         />
       </Box>
 
       {/* Color Menu */}
-      <Menu anchorEl={colorMenuAnchor} open={Boolean(colorMenuAnchor)} onClose={() => setColorMenuAnchor(null)}>
-        <Box sx={{ p: 2, display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 1, maxWidth: 200 }}>
+      <Menu
+        anchorEl={colorMenuAnchor}
+        open={Boolean(colorMenuAnchor)}
+        onClose={() => setColorMenuAnchor(null)}
+      >
+        <Box
+          sx={{
+            p: 2,
+            display: "grid",
+            gridTemplateColumns: "repeat(8, 1fr)",
+            gap: 1,
+            maxWidth: 200,
+          }}
+        >
           {colors.map((color) => (
             <Box
               key={color}
@@ -545,7 +602,15 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         open={Boolean(highlightMenuAnchor)}
         onClose={() => setHighlightMenuAnchor(null)}
       >
-        <Box sx={{ p: 2, display: "grid", gridTemplateColumns: "repeat(8, 1fr)", gap: 1, maxWidth: 200 }}>
+        <Box
+          sx={{
+            p: 2,
+            display: "grid",
+            gridTemplateColumns: "repeat(8, 1fr)",
+            gap: 1,
+            maxWidth: 200,
+          }}
+        >
           {colors.map((color) => (
             <Box
               key={color}
@@ -564,7 +629,12 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </Menu>
 
       {/* Link Dialog */}
-      <Dialog open={linkDialogOpen} onClose={() => setLinkDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={linkDialogOpen}
+        onClose={() => setLinkDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Link</DialogTitle>
         <DialogContent>
           <TextField
@@ -581,14 +651,23 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setLinkDialogOpen(false)}>Cancel</Button>
-          <Button onClick={confirmLink} variant="contained" disabled={!linkUrl.trim()}>
+          <Button
+            onClick={confirmLink}
+            variant="contained"
+            disabled={!linkUrl.trim()}
+          >
             Add Link
           </Button>
         </DialogActions>
       </Dialog>
 
       {/* Image Dialog */}
-      <Dialog open={imageDialogOpen} onClose={() => setImageDialogOpen(false)} maxWidth="sm" fullWidth>
+      <Dialog
+        open={imageDialogOpen}
+        onClose={() => setImageDialogOpen(false)}
+        maxWidth="sm"
+        fullWidth
+      >
         <DialogTitle>Add Image</DialogTitle>
         <DialogContent>
           <TextField
@@ -605,19 +684,23 @@ const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </DialogContent>
         <DialogActions>
           <Button onClick={() => setImageDialogOpen(false)}>Cancel</Button>
-          <Button onClick={confirmImage} variant="contained" disabled={!imageUrl.trim()}>
+          <Button
+            onClick={confirmImage}
+            variant="contained"
+            disabled={!imageUrl.trim()}
+          >
             Add Image
           </Button>
         </DialogActions>
       </Dialog>
     </Paper>
-  )
-}
+  );
+};
 
 // Image component for rendering images in the editor
 const ImageComponent = (props: any) => {
-  const entity = props.contentState.getEntity(props.block.getEntityAt(0))
-  const { src } = entity.getData()
+  const entity = props.contentState.getEntity(props.block.getEntityAt(0));
+  const { src } = entity.getData();
 
   return (
     <Box sx={{ textAlign: "center", my: 2 }}>
@@ -632,7 +715,7 @@ const ImageComponent = (props: any) => {
         }}
       />
     </Box>
-  )
-}
+  );
+};
 
-export default RichTextEditor
+export default RichTextEditor;

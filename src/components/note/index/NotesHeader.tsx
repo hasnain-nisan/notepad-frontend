@@ -31,7 +31,7 @@ import Link from "next/link";
 import { NOTE_ROUTES } from "@/libs/constants";
 import { categories, NotesHeaderProps } from "@/types/note.types";
 
-const categoryIcons: { [key: string]: React.ReactNode } = {
+export const categoryIcons: { [key: string]: React.ReactNode } = {
   All: <FolderOpen sx={{ mr: 1 }} />,
   Work: <WorkOutline sx={{ mr: 1 }} />,
   Personal: <PersonOutline sx={{ mr: 1 }} />,

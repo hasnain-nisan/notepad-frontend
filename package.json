@@ -17,6 +17,7 @@
     "@mui/material": "^7.1.2",
     "@mui/system": "^7.1.1",
     "@reduxjs/toolkit": "^2.8.2",
+    "@yaireo/tagify": "^4.35.1",
     "draft-js": "^0.11.7",
     "next": "15.3.4",
     "next-auth": "^4.24.11",

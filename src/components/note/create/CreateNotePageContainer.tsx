@@ -10,6 +10,8 @@ import { Box, Grid } from "@mui/material";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import CreateNoteHeader from "./CreateNoteHeader";
+import NoteForm from "./NoteForm";
+import TagsSection from "./TagsSection";
 
 export default function CreateNotePageContainer() {
   const router = useRouter();
@@ -103,9 +105,9 @@ export default function CreateNotePageContainer() {
       {!isPreviewMode ? (
         <Grid container spacing={4}>
           <Grid size={{ xs: 12, md: 8 }}>
-            {/* <NoteForm control={control} errors={errors} /> */}
+            <NoteForm control={control} errors={errors} />
             {/* <TagsSection
-              tags={tags}
+              tags={[]}
               newTag={newTag}
               onNewTagChange={(value) => dispatch(setNewTag(value))}
               onAddTag={() => dispatch(addTag())}

@@ -1,4 +1,6 @@
+import { CreateNoteFormData } from "@/libs/validations/createNote.schema";
 import React from "react";
+import { Control, FieldErrors } from "react-hook-form";
 
 export interface Note {
   id: number;
@@ -161,7 +163,7 @@ export const categories = [
   "Travel",
   "Health",
   "Finance",
-  "Programming"
+  "Programming",
 ];
 
 export interface CreateNoteHeaderProps {
@@ -169,4 +171,17 @@ export interface CreateNoteHeaderProps {
   isPreviewMode: boolean;
   onTogglePreview: () => void;
   onSave: () => void;
+}
+
+export interface NoteFormProps {
+  control: Control<CreateNoteFormData>;
+  errors: FieldErrors<CreateNoteFormData>;
+}
+
+export interface TagsSectionProps {
+  tags: string[];
+  newTag: string;
+  onNewTagChange: (value: string) => void;
+  onAddTag: () => void;
+  onRemoveTag: (tag: string) => void;
 }
